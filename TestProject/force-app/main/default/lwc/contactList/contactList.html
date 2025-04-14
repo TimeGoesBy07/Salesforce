@@ -1,0 +1,23 @@
+<template>
+    <template lwc:if={contacts}>
+        <lightning-card>
+            <p>Find user by name</p>
+            <template if:true={hasData}>
+                <p>Found {countResults} results</p>
+                <c-contact-details if:true={detailRow} selected={detailRow}></c-contact-details>
+            </template>
+            <template if:false={hasData}>
+                <p>No results found</p>
+            </template>
+            <lightning-input field-name="Enter a name" value={name} onchange={handleNameChange}></lightning-input>
+            <lightning-button disabled={canDelete} type="submit" label="Delete results"
+                onclick={handleDelete}></lightning-button>
+            <lightning-button type="submit" label="Refresh" onclick={handleRefresh}></lightning-button>
+
+            <template lwc:if={contacts}>
+                <lightning-datatable key-field="Id" onrowselection={handleSelected} data={contacts} columns={columns}>
+                </lightning-datatable>
+            </template>
+        </lightning-card>
+    </template>
+</template>

@@ -1,0 +1,696 @@
+<apex:component >
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'destyle.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'common.css')}" />
+
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/npm.js')}" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.min.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.min.css.map')}" />
+
+    <title>ホーム</title>
+
+    <style type="text/css">
+        body {
+            background-color: #FAF4F0;
+            font-family: "Noto Sans JP", !important;
+        }
+    
+        /* job-detail-header */
+        .mp-job-detail-main {
+            border-radius: 6px 6px;
+            border: 1px solid #CFCACA;
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 5px 0 0 0;
+        }
+
+        .mp-job-detail-main-inner {
+            border-top: 3px solid #ff6665;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+            padding: 3.5px 35px;
+            width: 100%;
+        }
+
+        .job-detail-header {
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .job-detail-header-title {
+            display: flex;
+            flex-direction: row;
+            align-items: start;
+            justify-content: space-between;
+            height: auto;
+        }
+
+        .job-detail-header-title-text p {
+            font-weight: 700;
+        }
+
+        .job-detail-header-title-id {
+            background: gainsboro;
+            border-radius: 3px;
+            min-width: 250px;
+            text-align: center;
+            font-size: 14px;
+            padding: 5px;
+            height: auto;
+        }
+
+        .job-detail-header-button {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .job-detail-header-button-individual {
+            width: fit-content;
+            white-space: nowrap;
+        }
+
+        p {
+            margin: 0 !important;
+        }
+
+        .highlight {
+            border: 1px solid #ff6665;
+            border-radius: 6px;
+            margin: 0 5px 5px 0;
+            padding: 3px;
+            width: fit-content;
+        }
+
+        .normal {
+            border: 1px solid #CFCACA;
+            border-radius: 6px;
+            margin: 0 5px 5px 0;
+            padding: 3px;
+            width: fit-content;
+        }
+
+        .job-detail-info {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+            height: 100%;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        .item-title img {
+            width: 16px;
+            height: 18px;
+            margin-right: 12px;
+        }
+
+        .row {
+            display: flex;
+            margin: 0;
+        }
+
+        .row-item,
+        .last-row-item {
+            flex: 1;
+            display: flex;
+            /* margin-bottom: 15px; */
+            padding: 0 !important;
+        }
+
+        .last-row-item .item-title {
+            display: flex;
+            color: #ff6665;
+        }
+
+        .inner-item-container {
+            display: flex;
+            border-bottom: 1px solid gainsboro;
+            width: 100%;
+            padding-bottom: 30px;
+        }
+
+        .row-item .item-title,
+        .last-row-item .item-title {
+            color: #ff6665;
+            min-width: 100px;
+            display: flex;
+        }
+
+        .item-content {
+            width: 70%;
+            font-weight: 700;
+        }
+
+        .job-detail-recommend {
+            display: flex;
+            flex-direction: row;
+            margin-top: 150px;
+        }
+
+        .job-detail-recommend-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            border-radius: 20px;
+            position: relative;
+            width: 25%;
+        }
+
+        .job-detail-recommend-title p {
+            background-color: #ff6f6f;
+            border-radius: 15px;
+            margin: 0;
+            text-align: center;
+            width: 100%;
+            padding: 5px;
+        }
+
+        .job-detail-recommend-title::after {
+            content: "";
+            position: absolute;
+            right: -10px;
+            top: 50%;
+            transform: translateY(-50%) translateX(-15%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid #ff6f6f;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+        }
+
+        .job-detail-recommend-content {
+            font-weight: 700;
+            color: crimson;
+            margin-left: 20px;
+        }
+
+        /*job-summary  */
+        .job-summary {
+            margin-top: 40px;
+        }
+
+        .job-summary-title {
+            background-color: #FFE0E0;
+            line-height: 32px;
+            font-weight: 700;
+            text-align: center;
+            padding: 10px;
+            margin: 0 0 20px 0;
+        }
+
+        .job-summary .job-summary-title p {
+            margin: 0;
+        }
+
+        .job-summary .job-summary-detail p {
+            margin: 20px 0;
+            line-height: 20px;
+            font-weight: 400;
+        }
+
+        .job-summary .job-summary-detail .job-summary-detail-info {
+            margin: 20px 0 20px 0;
+        }
+
+        /* job-working-conditionStyle */
+        .job-working-condition {
+            margin-top: 40px;
+        }
+
+        .job-working-condition h1 {
+            text-align: center;
+            color: #333;
+            background-color: #ffe6e6;
+            font-size: 16px;
+            line-height: 32px;
+            font-weight: 700;
+            padding: 10px;
+            margin: 0 0 20px 0;
+            border-radius: 5px;
+        }
+
+        .job-working-condition .job-working-condition-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(8, auto);
+            column-gap: 15px;
+        }
+
+        .job-working-condition .job-working-condition-info-label {
+            display: flex;
+            font-size: 14px;
+            color: #ff4d4d;
+            font-weight: bold;
+            margin-bottom: 5px;
+            line-height: 25px;
+        }
+
+        .job-working-condition-info-label img {
+            width: 22px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .job-working-condition .content {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #CFCACA;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding-bottom: 10px;
+        }
+
+        .job-working-condition .content p {
+            padding: 0;
+        }
+
+        @media(min-width:992px) {
+            .row {
+                margin-bottom: 10px !important;
+            }
+
+            #row1 .row-item:not(:first-child, :last-child),
+            #row2 .row-item:not(:first-child, :last-child) {
+                margin: 0 30px 0 30px !important;
+            }
+        }
+
+        @media(max-width: 991px) {
+            .row {
+                display: unset;
+            }
+
+            .inner-item-container {
+                border-bottom: none;
+                padding-bottom: unset;
+            }
+
+            .job-detail-recommend {
+                margin-top: 0;
+            }
+
+            .row-item,
+            .last-row-item {
+                height: fit-content;
+                padding: 0 !important;
+                margin: 5px 0;
+            }
+
+            .job-detail-recommend {
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .job-detail-recommend-title {
+                width: 100%;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                background-color: red;
+                margin-bottom: 20px;
+            }
+
+            .job-detail-recommend-title::after {
+                content: "";
+                position: absolute;
+                left: 50%;
+                bottom: -10px;
+                transform: translateY(90%) translateX(-50%);
+                width: 0;
+                height: 0;
+                border-left: 10px solid transparent;
+                border-right: 10px solid transparent;
+                border-top: 10px solid #ff6f6f;
+            }
+
+            .job-detail-recommend-content {
+                margin: 0;
+            }
+        }
+
+        /* mobile-screen */
+        @media (max-width: 767px) {
+            .row-item .item-title,
+            .last-row-item .item-title {
+                min-width: 25px;
+            }
+
+            .item-content {
+                padding-bottom: 0;
+            }
+        }
+
+        @media(max-width: 600px) {
+            .mp-job-detail-main {
+                margin: 5px 5px 0 5px ;
+            }
+
+            .job-detail-header-title {
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                align-items: start;
+            }
+
+            .job-detail-header-title-id {
+                background: none;
+                padding: 0px;
+                margin-top: 0px;
+                width: fit-content;
+                text-align: left;
+            }
+
+            .job-detail-header-button {
+                width: 300px;
+            }
+
+            .job-detail-info {
+                min-height: fit-content;
+                margin: 0;
+            }
+
+            /* job-summary */
+            .job-summary .job-summary-detail p {
+                margin: 20px 0;
+                font-weight: 400;
+            }
+
+            .job-summary .job-summary-detail .job-summary-detail-info p {
+                margin: 0;
+            }
+
+            .job-working-condition .job-working-condition-info {
+                display: grid;
+                grid-template-columns: 100%;
+            }
+        }
+    </style>
+
+    <section id="content">
+        <div class="mp-job-detail-main">
+            <div class="mp-job-detail-main-inner">
+                <div class="job-detail">
+                    <div class="job-detail-header">
+                        <div class="job-detail-header-title">
+                            <div class="job-detail-header-title-text">
+                                <p>
+                                    【千代田区】 官公庁・自治体/土日祝休み/コミュニケーションスキルいかせます /テレマ経験いかせますのお仕事です
+                                </p>
+                            </div>
+                            <div class="job-detail-header-title-id">
+                                <p class="jobCurrent-content-header-code">
+                                    <span>仕事番号 : </span>
+                                    6000959900
+                                </p>
+                            </div>
+                        </div>
+                        <div class="job-detail-header-button">
+                            <div class="job-detail-header-button-individual highlight">
+                                <p>テレフォンオペレーター</p>
+                            </div>
+                            <div class="job-detail-header-button-individual highlight">
+                                <p>契約社員(受託業務)</p>
+                            </div>
+                            <div class="job-detail-header-button-individual normal">
+                                <p>月給制</p>
+                            </div>
+                            <div class="job-detail-header-button-individual normal">
+                                <p>交通費支給</p>
+                            </div>
+                            <div class="job-detail-header-button-individual normal">
+                                <p>駅近</p>
+                            </div>
+                            <div class="job-detail-header-button-individual normal">
+                                <p>オフィスカジュアル</p>
+                            </div>
+                            <div class="job-detail-header-button-individual normal">
+                                <p>屋内原則禁煙(喫煙室あり)</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container job-detail-info">
+                        <div id="row1" class="row">
+                            <div class="row-item col-md-4 col-xs-12">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-bag--outline.svg')}" />
+                                        <p class="hidden-xs">給与</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>
+                                            テレフォンオペレーター/ 営業(フォロー営業)/広報事務
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-item col-md-4 col-xs-6">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-wallet.svg')}" />
+                                        <p class="hidden-xs">職種</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>
+                                            月給 281,000円 <br></br>
+                                            ※時給換算 1,850円 <br></br>
+                                            交通費あり
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-item col-md-4 col-xs-6">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-pin--outline.svg')}" />
+                                        <p class="hidden-xs">勤務地</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>東京都千代田区</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="row2" class="row">
+                            <div class="row-item col-md-4 hidden-sm hidden-xs">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-alarm.svg')}" />
+                                        <p class="hidden-xs">勤務時間</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>9:00~17:30 (実働7時間 30分) 休憩60分</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-item col-md-4 col-xs-12">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img  src="{!URLFOR($Resource.iconCollection, 'icons/icn-duration.svg')}" />
+                                        <p class="hidden-xs">勤務期間</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>即日~長期(6ヶ月以上 の可能性あり)</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row-item col-md-4 hidden-sm hidden-xs">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-schedule.svg')}" />
+                                        <p class="hidden-xs">勤務曜日</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>
+                                            月・火・水・木・金 月~金/週5勤務(土日休み)
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="row3" class="row">
+                            <div class="last-row-item col-md-12 col-xs-12" style="margin-bottom: 20px;">
+                                <div class="inner-item-container">
+                                    <div class="item-title">
+                                        <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-train.svg')}" />
+                                        <p class="hidden-xs">最寄駅</p>
+                                    </div>
+                                    <div class="item-content">
+                                        <p>
+                                            都営三田線 内幸町駅 徒歩 1分 <br></br>
+                                            新橋駅 徒歩 8分 <br></br>
+                                            日比谷駅 徒歩4分
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="job-detail-recommend">
+                        <div class="job-detail-recommend-title">
+                            <p>おすすめポイント</p>
+                        </div>
+                        <div class="job-detail-recommend-content">
+                            <p>
+                                デジタル人材育成のための 「実践の場」 開拓モデル事業事業 <br></br>
+                                引継ぎあり<br></br>
+                                便利な立地
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="job-summary">
+                    <div class="job-summary-title">
+                        <p>お仕事内容</p>
+                    </div>
+                    <div class="job-summary-detail">
+                        <p>厚生労働省 デジタル人材育成のための「実践の場」 開拓モデル事業</p>
+                        <div class="job-summary-detail-info">
+                            <p>企業開拓:教育訓練を修了した方が実務経験する派遣受け入れ先の開拓のテレアポ、入電対応</p>
+                            <p>登録者フォロー: 申込した方の状況確認、登録誘導、入電対応</p>
+                            <p>事業周知:公的職業訓練実施先(ハローワーク、PCスクール等)への周知活動、事業説明</p>
+                            <p>将来的にご要望およびスキルを考慮して社員サポート (研修運営、セミナー運営)、派遣営業等を担当いただく予定です。</p>
+                        </div>
+                        <p>※2025年9月末までの期間限定業務となります。</p>
+                    </div>
+                </div>
+                <div class="job-working-condition">
+                    <div class="job-summary-title">
+                        <p>勤務条件</p>
+                    </div>
+                    <div class="job-working-condition-info">
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-book.svg')}" />
+                                <p>お仕事分野</p>
+                            </div>
+                            <p>テレフォンオペレーター/営業 (フォロー営業)/広報事務</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-bag--outline.svg')}" />
+                                <p>勤務先の業界</p>
+                            </div>
+                            <p>官公庁・自治体</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-people.svg')}" />
+                                <p>募集人数</p>
+                            </div>
+                            <p>4人</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-person.svg')}" />
+                                <p>雇用形態</p>
+                            </div>
+                            <p>契約社員 (受託業務)</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-wallet.svg')}" />
+                                <p>給与</p>
+                            </div>
+                            <p>月給 281,000円</p>
+                            <p>※時給換算 1,850円</p>
+                            <p>交通費規程に基づき交通費支給</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-duration.svg')}" />
+                                <p>勤務期間</p>
+                            </div>
+                            <p>即日~長期(6ヶ月以上の可能性あり)</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-schedule.svg')}" />
+                                <p>勤務曜日</p>
+                            </div>
+                            <p>月・火・水・木・金</p>
+                            <p>月~金/週5勤務(土日休み)</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-alarm.svg')}" />
+                                <p>勤務時間</p>
+                            </div>
+                            <p>9:00~17:30 (実働7時間30分) 休憩60分</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-setup.svg')}" />
+                                <p>曜日・時間調整</p>
+                            </div>
+                            <p>勤務開始・終了時間の調整可能</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-clock.svg')}" />
+                                <p>残業</p>
+                            </div>
+                            <p>10時間以内</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-info.svg')}" />
+                                <p>就業補足</p>
+                            </div>
+                            <p>正社員の方から引継ぎを受けていただきます。</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-bookmark.svg')}" />
+                                <p>必要経験</p>
+                            </div>
+                            <p>ルート・フォロー営業、法人向け営業、新規開拓営業、インバウンド、アウトバウンド</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-pencil.svg')}" />
+                                <p>必要スキル</p>
+                            </div>
+                            <p>入力・編集(Word)、入力・編集(Excel)、入力・編集 (PowerPoint)</p>
+                        </div>
+                    
+                        <div class="content">
+                            <div class="job-working-condition-info-label">
+                                <img src="{!URLFOR($Resource.iconCollection, 'icons/icn-warning.svg')}" />
+                                <p>特記事項</p>
+                            </div>
+                            <p>パソナが受託した案件に契約社員としてご勤務いただきます。</p>
+                        </div>
+                    
+                        <div class="content">
+                            <p>※就業場所が官庁、学校、病院の場合、「屋内禁煙」は「敷地内禁煙」、 「屋内原則禁煙(喫煙室あり)」は「敷地内禁煙(喫煙場所あり)」を指します</p>
+                        </div>
+                    </div>                
+                </div>
+            </div>
+        </div>
+    </section>
+</apex:component>

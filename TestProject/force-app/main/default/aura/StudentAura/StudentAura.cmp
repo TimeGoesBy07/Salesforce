@@ -1,0 +1,43 @@
+<aura:component implements="flexipage:availableForAllPageTypes" access="global">
+    <aura:attribute name="nameInput" type="String" />
+    <aura:attribute name="dobInput" type="Date" />
+    <aura:attribute name="classList" type="List" default="[]" />
+    <aura:attribute name="classInput" type="String" />
+    <aura:attribute name="statusInput" type="String" />
+    <aura:attribute name="gpaInput" type="Integer" />
+    <aura:attribute name="creditInput" type="Integer" />
+
+    <lightning:card class="slds-p-around_medium" title="Add a student by Aura component">
+        <lightning:input required="true" label="Name" value="{!v.nameInput}" onchange="{!c.handleNameChange}">
+        </lightning:input>
+        <lightning:input required="true" label="Date of Birth" type="Date" value="{!v.dobInput}"
+            onchange="{!c.handleDoBChange}">
+        </lightning:input>
+
+        <lightning:button label="Search Class" onclick="{!c.fetchClasses}" />
+        <aura:if isTrue="{!v.classList.length >= 0}">
+            <ul>
+                <aura:iteration items="{!v.classList}" var="cls">
+                    <lightning:layout class="slds-m-top--small">
+                        <lightning:layoutItem size="2">
+                            <lightning:icon iconName="standard:account" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem size="10">
+                            <a onclick="{!c.handleSelectClass}" data-record="{!cls.Id}">
+                                <strong class="custom-class">{!cls.Name}</strong>
+                            </a>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </aura:iteration>
+            </ul>
+        </aura:if>
+
+        <lightning:input label="Status" value="{!v.statusInput}" onchange="{!c.handleStatusChange}">
+        </lightning:input>
+        <lightning:input label="GPA" value="{!v.gpaInput}" onchange="{!c.handleGpaChange}">
+        </lightning:input>
+        <lightning:input label="Credit" value="{!v.creditInput}" onchange="{!c.handleCreditChange}">
+        </lightning:input>
+        <lightning:button label="Create student" onclick="{!c.handleSubmit}" />
+    </lightning:card>
+</aura:component>

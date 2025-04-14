@@ -1,0 +1,108 @@
+<template>
+    <template lwc:if={list}>
+        <lightning-card title="Student List">
+            <div class="slds-m-around_medium">
+                <template lwc:if={isLoading}>
+                    <div class="spinner">
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <!-- <lightning-datatable key-field="Id" onrowselection={handleSelected} data={list} columns={columns}
+                        onrowaction={handleRowAction}>
+                    </lightning-datatable> -->
+
+                    <div lwc:if={checkList} class="table-container">
+                        <table class="the-table">
+                            <thead class="table-header">
+                                <tr>
+                                    <th class="column-cb"><lightning-input checked={fullCheck} type="checkbox"
+                                            onchange={handleSelectAll}></lightning-input></th>
+                                    <th class="column-name">名前</th>
+                                    <th class="column-dob">誕生日</th>
+                                    <th class="column-class">クラス</th>
+                                    <th class="column-status">Status</th>
+                                    <th class="column-credit">Total Credits</th>
+                                    <th class="column-gpa">GPA</th>
+                                    <th class="column-action">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template for:each={currentPageItems} for:item="item">
+                                    <tr key={item.Id}>
+                                        <td class="column-cb">
+                                            <lightning-input checked={item.isChecked} class="checkbox" type="checkbox"
+                                                data-id={item.Id} onchange={handleCheckboxChange}>
+                                            </lightning-input>
+                                        </td>
+                                        <td class="column-name"><a href={item.nameUrl} target="_blank">{item.Name}</a>
+                                        </td>
+                                        <td class="column-dob">{item.Date_of_Birth__c}</td>
+                                        <td class="column-class"><a href={item.classUrl}
+                                                target="_blank">{item.classText}</a></td>
+                                        <td class="column-status">{item.Status__c}</td>
+                                        <td class="column-credit">{item.Total_Credit__c}</td>
+                                        <td class="column-gpa">{item.GPA_Score__c}</td>
+                                        <td class="column-action">
+                                            <lightning-button-icon data-id={item.Id}
+                                                class="slds-icon slds-icon_xxx-small" title="Edit"
+                                                icon-name="utility:edit" onclick={openEditForm}>
+                                            </lightning-button-icon>
+                                            <lightning-button-icon data-id={item.Id}
+                                                class="slds-icon slds-icon_xxx-small" title="Delete"
+                                                icon-name="utility:delete" onclick={openDeleteSingleModal}>
+                                            </lightning-button-icon>
+                                        </td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                        <div class="pagination-controls slds-align_absolute-center slds-m-around_medium">
+                            <div class="slds-align_absolute-center">
+                                <lightning-button disabled={isFirstPage} onclick={handleFirstPage}
+                                    label="First"></lightning-button>
+                                <lightning-button class="slds-m-horizontal_small" disabled={isFirstPage}
+                                    onclick={previousPage} label="Previous"></lightning-button>
+
+                                <div class="page-bar slds-align_absolute-center">
+                                    <template lwc:if={list} for:each={pageNumbers} for:item="page">
+                                        <button key={page} class="num-button" onclick={goToPage} data-id={page}>
+                                            {page}
+                                        </button>
+                                    </template>
+                                </div>
+
+                                <lightning-button class="slds-m-horizontal_small" disabled={isLastPage}
+                                    onclick={nextPage} label="Next"></lightning-button>
+                                <lightning-button disabled={isLastPage} onclick={handleLastPage}
+                                    label="Last"></lightning-button>
+                            </div>
+                        </div>
+                    </div>
+                    <div lwc:else class="slds-align_absolute-center slds-m-around_medium">
+                        <p>Nothing was found</p>
+                    </div>
+
+                    <div class="slds-align_absolute-center slds-m-around_medium">
+                        <lightning-button class="slds-m-around_small" type="submit" label="Create a new student"
+                            onclick={openCreateForm}></lightning-button>
+                        <lightning-button class="slds-m-around_small" disabled={canDelete} type="submit"
+                            label="Delete results" onclick={openDeleteModal}></lightning-button>
+                    </div>
+
+                    <div lwc:if={openDelete}>
+                        <c-delete-student onmessage={handleRequestDelete} open={openDelete}
+                            studentlist={getListToDelete}></c-delete-student>
+                    </div>
+                    <div lwc:if={openCreate}>
+                        <c-create-student onmessage={handleRequestCreate} open={openCreate}></c-create-student>
+                    </div>
+                    <div lwc:if={openEdit}>
+                        <c-student-details onmessage={handleRequestUpdate} open={openEdit}
+                            studentid={selectedId}></c-student-details>
+                    </div>
+                </template>
+            </div>
+        </lightning-card>
+    </template>
+</template>

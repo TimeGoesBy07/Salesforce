@@ -1,0 +1,61 @@
+<template>
+    <section lwc:if={open} role="dialog" tabindex="-1" aria-modal="true" aria-labelledby="modal-heading-01"
+        class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+            <lightning-button-icon class="slds-modal__close" title="Close" icon-name="utility:close"
+                icon-class="slds-button_icon-inverse" onclick={closeModal}>
+            </lightning-button-icon>
+            <div class="slds-modal__header">
+                <h1 id="modal-heading-02" class="slds-modal__title slds-hyphenate" tabindex="-1">Edit Student</h1>
+            </div>
+            <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                <lightning-card>
+                    <div lwc:if={isLoading}>
+                        <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                    </div>
+                    <div lwc:else>
+                        <div lwc:if={studentInfo} class="slds-m-around_medium">
+                            <!-- <lightning-record-edit-form object-api-name={objectApiName} record-id={studentid}
+                                onsuccess={handleSuccess}>
+                                <lightning-messages></lightning-messages>
+                                <lightning-input-field field-name="Name"></lightning-input-field>
+                                <lightning-input-field field-name="Date_of_Birth__c"></lightning-input-field>
+                                <lightning-input-field field-name="Class__c"> </lightning-input-field>
+                                <lightning-input-field field-name="Class__r.Name"> </lightning-input-field>
+                                <lightning-input-field field-name="Status__c"> </lightning-input-field>
+                                <lightning-input-field field-name="GPA_Score__c"> </lightning-input-field>
+                                <lightning-input-field field-name="Total_Credit__c"> </lightning-input-field>
+                            </lightning-record-edit-form> -->
+
+                            <p>{timeVariable}</p>
+
+                            <lightning-input label="Name" required="true" value={newName} placeholder={studentInfo.Name}
+                                onchange={handleNameChange}></lightning-input>
+                            <lightning-input label="Birthday" required="true" value={newDoB} type="date"
+                                placeholder={studentInfo.Date_of_Birth__c} onchange={handleDobChange}></lightning-input>
+
+                            <lightning-record-picker label="Class" required="true" value={newClass}
+                                onchange={handleClassChange} placeholder="Search Class" object-api-name="Class__c">
+                            </lightning-record-picker>
+
+                            <lightning-input label="Status" value={newStatus} placeholder={studentInfo.Status__c}
+                                onchange={handleStatusChange}></lightning-input>
+                            <lightning-input label="GPA" value={newGpa} placeholder={studentInfo.GPA_Score__c}
+                                onchange={handleGPAChange}></lightning-input>
+                            <lightning-input label="Total Credits" value={newCredits}
+                                placeholder={studentInfo.Total_Credit__c}
+                                onchange={handleCreditsChange}></lightning-input>
+                        </div>
+                    </div>
+                </lightning-card>
+            </div>
+            <div class="slds-modal__footer">
+                <button class="slds-button slds-button_neutral" aria-label="Cancel and close"
+                    onclick={closeModal}>Cancel</button>
+                <button class="slds-button slds-button_brand" type="submit" name="submit" disabled={disableTrigger}
+                    onclick={handleUpdate}>Update student</button>
+            </div>
+        </div>
+    </section>
+    <div class="slds-backdrop slds-backdrop_open" role="presentation"></div>
+</template>

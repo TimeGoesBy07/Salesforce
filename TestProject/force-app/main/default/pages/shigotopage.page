@@ -1,0 +1,41 @@
+<apex:page >
+    <style type="text/css">
+        @media (min-width: 768px){
+            .modal-dialog{
+                width: 70% !important
+            }
+        }
+    </style>
+    <script type="text/javascript">
+        function openShigoto() {
+            $('#modalShigoto').modal('toggle');
+        }
+    </script>
+    <!-- Begin Default Content REMOVE THIS -->
+    <h1>Congratulations</h1>
+    This is your new Page
+    <button type="button" class="btn btn-primary btn-lg" onclick="openShigoto()">
+        Click Me
+    </button>
+
+    <!-- The modal -->
+    <div class="modal fade" id="modalShigoto" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="modalLabel">Modal Title</h4>
+                </div>
+                <div class="modal-body">
+                    <c:shigoto />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Default Content REMOVE THIS -->
+</apex:page>

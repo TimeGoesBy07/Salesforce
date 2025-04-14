@@ -1,0 +1,14 @@
+<apex:page standardController="Student__c" recordSetVar="students">
+    <apex:pageBlock title="Student Object Page">
+        <apex:pageBlockSection title="A Section Title">
+            <apex:repeat value="{!students}" var="stu">
+                <p>
+                    {!stu.Name}, {!stu.Class__r.Name}
+                </p>
+            </apex:repeat>
+        </apex:pageBlockSection>
+        <apex:pageBlockSection title="A Section Title">
+            <apex:relatedList list="Class__r" id="a04Qy000001UMP7IAO" />
+        </apex:pageBlockSection>
+    </apex:pageBlock>
+</apex:page>

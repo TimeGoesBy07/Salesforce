@@ -1,0 +1,25 @@
+<template>
+    <lightning-card>
+        <template if:true={selected}>
+            <h2>Viewing {selected.Email} ?</h2>
+            <lightning-button type="submit" label="View details" onclick={handleView}></lightning-button>
+        </template>
+        <template if:false={selected}>
+            <h2>Choose any contact to view details</h2>
+        </template>
+
+        <lightning-card>
+            <template if:true={view}>
+                <p>Viewing more details of {selected.Email}</p>
+                <lightning-formatted-text value={selected.Email}></lightning-formatted-text>
+                <ul if:true={selected}>
+                    <template for:each={contactEntries} for:item="entry">
+                        <li key={entry.label}>
+                            <strong>{entry.label}:</strong> {entry.value}
+                        </li>
+                    </template>
+                </ul>
+            </template>
+        </lightning-card>
+    </lightning-card>
+</template>

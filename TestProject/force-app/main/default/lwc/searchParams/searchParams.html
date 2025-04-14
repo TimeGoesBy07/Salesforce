@@ -1,0 +1,37 @@
+<template>
+    <lightning-card>
+        <div class="slds-grid slds-grid_vertical slds-gutters slds-m-around_small">
+            <div class="slds-col">
+                <lightning-input field-name="Enter student code" label="Student code" value={searchCode}
+                    onchange={handleCodeChange}></lightning-input>
+                <lightning-input field-name="Enter name" label="Name" value={searchName}
+                    onchange={handleSearchChange}></lightning-input>
+                <lightning-input value={searchClass} label="Class" onchange={handleClassChange}>
+                </lightning-input>
+                <lightning-input class="startPoint" type="date" value={startPoint} label="From Date"
+                    onchange={handleStartDate}>
+                </lightning-input>
+                <lightning-input class="endPoint" type="date" value={endPoint} label="End Date"
+                    onchange={handleEndDate}>
+                </lightning-input>
+            </div>
+            <div class="slds-col">
+                <div class="slds-grid_vertical slds-grid slds-align_absolute-center">
+                    <div class="slds-col slds-align_absolute-center">
+                        <lightning-combobox class="slds-m-around_small" label="Number of items" value={noOfItems}
+                            options={pageOptions} onchange={handlePicklistChange}></lightning-combobox>
+                    </div>
+                    <div class="slds-col slds-align_absolute-center slds-m-around_small">
+                        <lightning-button type="submit" label="Search" onclick={handleSearch}></lightning-button>
+                    </div>
+                    <div class="slds-col slds-align_absolute-center slds-m-around_small">
+                        <lightning-button type="submit" label="Clear" onclick={handleClear}></lightning-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div>
+            <c-manage-student></c-manage-student>
+        </div> -->
+    </lightning-card>
+</template>

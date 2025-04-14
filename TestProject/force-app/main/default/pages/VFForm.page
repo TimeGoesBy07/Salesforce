@@ -1,0 +1,781 @@
+<!-- <apex:page standardController="Case" extensions="FormExtension" showHeader="false" applyHtmlTag="false" docType="html-5.0"> -->
+<apex:page standardController="Notification__c" extensions="NotificationExtension" showHeader="false" applyHtmlTag="false" docType="html-5.0">
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'destyle.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'common.css')}"/>
+
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/jquery.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/bootstrap.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/bootstrap.min.js')}" />
+    <apex:includeScript value="{!URLFOR($Resource.bt, 'css/js/npm.js')}" />
+
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.min.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap-theme.min.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.css')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.css.map')}" />
+    <apex:stylesheet value="{!URLFOR($Resource.bt, 'css/css/bootstrap.min.css.map')}" />
+    
+    <title>ホーム</title>
+    
+    <script type="text/javascript">
+        let itemsPerPage = 5;
+        let currentPage = 1;
+        let itemList = 0;                
+        let totalItems = 0;
+        let currentList;
+        let currentNotification = '';
+
+        function updatePagination() {
+            totalItems = currentList.length;
+            totalPages = Math.ceil(totalItems / itemsPerPage);
+            const pageNumbersContainer = document.getElementById("page-numbers");
+            const prevButton = document.getElementById("prev");
+            const nextButton = document.getElementById("next");
+
+            pageNumbersContainer.innerHTML = "";
+
+            if(currentPage === 1)
+                prevButton.disabled = true;
+            else
+                prevButton.disabled = false;
+
+            if(currentPage === totalPages)
+                nextButton.disabled = true;
+            else
+                nextButton.disabled = false;
+
+            let pages = [];
+            let range = 2;
+
+            if (totalPages <= 3) {
+                for (let i = 1; i <= totalPages; i++) {
+                    pages.push(i);
+                }
+            } else {
+                pages.push(1);
+
+                if (currentPage > range + 2) {
+                    pages.push("...");
+                }
+
+                for (let i = Math.max(2, currentPage - range); i <= Math.min(totalPages - 1, currentPage + range); i++) {
+                    pages.push(i);
+                }
+
+                if (currentPage < totalPages - (range + 1)) {
+                    pages.push("...");
+                }
+
+                pages.push(totalPages);
+            }
+
+            pages.forEach((page) => {
+                const pageButton = document.createElement("div");
+                pageButton.textContent = page;
+                pageButton.classList.add("page-number");
+
+                if (page === currentPage) {
+                    pageButton.classList.add("active");
+                }
+
+                if (page === "...") {
+                    pageButton.style.pointerEvents = "none";
+                    pageButton.style.color = "#aaa";
+                } else {
+                    pageButton.onclick = () => goToPage(page);
+                }
+
+                pageNumbersContainer.appendChild(pageButton);
+            });
+
+            displayItems();
+        }
+
+        function changePage(step) {
+            currentPage += step;
+            updatePagination();
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            updatePagination();
+        }
+
+        function expandFunction() {
+            itemsPerPage = 10;
+            totalItems = currentList.length;
+            totalPages = Math.ceil(totalItems / itemsPerPage);
+            document.getElementById("text-option").style.display = 'none';
+            document.getElementById("table-pagination").style.display = 'flex';
+            document.querySelectorAll(".tab-content-line_content_text").forEach(el => {
+                el.style.display = 'block';
+            });
+
+            updatePagination();
+        }
+
+        function displayItems() {
+            const itemList = document.getElementById("tab1").querySelectorAll(".tab-content-line");
+            let start = (currentPage - 1) * itemsPerPage;
+            let end = start + itemsPerPage;
+
+            itemList.forEach((item, index) => {
+                item.style.display = (index >= start && index < end) ? "flex" : "none";
+            });
+        }
+
+        window.onload = function () {
+            currentList = document.getElementById('tab1').querySelectorAll(".tab-content-line");
+            initialDisplay();
+        };
+
+        function setActiveTab(tab){
+            currentPage = 1;
+            currentList = document.getElementById(tab).querySelectorAll(".tab-content-line");
+            updatePagination();
+        }
+
+        function getSpanContext(caseId){
+            currentNotification = caseId;
+            let div = document.getElementById(caseId); // Get the specific div by ID
+
+            if (div) {
+                let titleSpan = div.querySelector(".tab-content-line_content_title")?.textContent.trim();
+                let contentSpan = div.querySelector(".tab-content-line_content_text")?.textContent.trim();
+
+                document.getElementById("modalTitle").textContent = titleSpan;
+                document.getElementById("modalContext").textContent = contentSpan; 
+                $('#modalText').modal('toggle');
+                
+                return { title: titleSpan, content: contentSpan }; // Return the values if needed
+            } else {
+                console.log("Div not found!");
+                return null;
+            }
+        }
+
+        function countUnread(){
+            let unreadNo = document.getElementById('tab1').querySelectorAll(".tab-content-line_dot.unread").length;
+            document.getElementById('bubble-count-number').innerHTML = unreadNo;
+        }
+
+        function initialDisplay() {
+            itemsPerPage = 5;
+            totalItems = currentList.length;
+            totalPages = Math.ceil(totalItems / itemsPerPage);
+            updatePagination();
+            countUnread();
+        }
+
+        function callToApex(recordId){     
+            let dotElement = document.getElementById(recordId).querySelector(".tab-content-line_dot.unread");
+            console.log(dotElement)
+
+            if (dotElement) {
+                dotElement.style.display = 'none';
+                dotElement.classList.remove("unread");
+                dotElement.classList.add("read");
+                countUnread();
+
+                Visualforce.remoting.Manager.invokeAction(
+                    '{!$RemoteAction.NotificationExtension.updateNotification}',
+                    recordId,
+                    function(result, event) {
+                        if (event.status) {
+                            currentNotification = '';
+                            console.log("Update successful");
+                        } else {
+                            currentNotification = '';
+                            console.error("Error:", event.message);
+                        }
+                    }, 
+                    {escape: false}
+                )   
+            } else {
+                console.log("Element is hidden");
+            }
+        }
+    </script>
+
+    <style type="text/css">
+        body {
+            background-color: #FAF4F0;
+            font-family: "Noto Sans JP", !important;
+        }
+
+        button{
+            width: 60px;
+            padding: 10px;
+            text-align: center
+        }
+        button:disabled{
+            background: red;
+            cursor: not-allowed;
+            color: white;
+            opacity: 0.5;
+            border: none
+        }
+        ul, li{
+            margin-left: 0 !important;
+        }
+        .mp-Main-Menu{
+            padding-bottom: 5rem;
+            background-color: #FAF4F0;
+        }
+        .mp-Main-MenuInner{
+            display: grid;
+            grid-template-columns: 70% 30%;
+        }
+        .mp-Main-MenuUser-Title{
+            font-size: 1.6rem;
+            color: #000000;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #CB050C;
+            margin-bottom: 2rem;
+        }
+        .mp-Main-MenuUser-Container{
+            background-color: #fff;
+            height: auto;
+            padding: 0 20px !important;
+        }
+   
+        .tab-content-line-timeline{
+            display: flex;
+            align-items: center;
+            padding: 0 !important;
+        }
+
+        .tab-content-line_dot.unread{
+            min-width: 20px;
+        }
+
+        .container{
+            margin-left: 0
+        }
+   
+        .tab-pane{
+            padding-left: 0;
+        }
+
+        .tab-content-line_date{
+            width: 60px;
+        }
+     
+        .bubble-count-number{
+            color: white;
+            font-size: 1.5em;
+            line-height: 1.5em;
+            min-width: 1.5em;
+            font-weight: 700;
+            /* padding: 0em 0.5em; */
+            background: #E38038;
+            border-radius: 1.5em;
+            position: absolute;
+            top: -1rem;
+            border: 1px solid;
+        }
+        .nav-tabs {
+            display: flex;
+            width: 100%;
+            /* border-bottom: 2px solid #CB050C; */
+        }
+        .nav-tabs > li {
+            flex: 1; /* Makes each tab flexible and take equal width */
+            text-align: center;
+        }
+        .nav-tabs > li:last-child{
+            margin-right: 0; 
+        }
+        .nav-tabs > li > a {
+            width: 100%;
+            border-radius: 0;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border: 1px solid #CFCACA;
+            border-bottom:none;
+            color: black;
+            position: relative;
+            font-weight: 700;
+            padding: 0.8rem;
+        }
+        .nav-tabs>li.active>a{
+            color: white;
+            background-color: #CB050C;
+            border: none;
+        }
+        .nav-tabs>li>a:hover{
+            color: white;
+            background-color: #890308 !important;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border: 1px solid #890308;
+            border-bottom: none;
+        }
+        .nav-tabs>li.active>a:hover{
+            color: white;
+            background-color: #890308 !important;
+            border: none;
+        }
+        .nav-tabs>li.active>a:focus{
+            color: white;
+            background-color: #CB050C;
+            border: none;
+        }
+        .tab-content {
+            width: 100%;
+            border-top: none;
+        }
+        .tab-content-line{
+            width: 100%;
+            display: flex;
+            padding: 1.5rem;
+            border: 1px solid #CFCACA;
+            align-items: center;
+            border-top: none;
+            cursor: pointer;
+        }
+        .tab-content-line:hover{
+            background-color: #F8F8F8;
+        }
+        .tab-content-line:hover .tab-content-line_content span{
+            color: #CB050C;
+            text-decoration: underline;
+        }
+        .tab-content-line:last-child{
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+        .tab-content-line_content{
+            display: flex;
+            flex-direction: column;
+        }
+        .tab-content-line_content img {
+            margin-right: 1rem;
+        }
+        .tab-content-line_content span {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .tab-content-line_content_ghim {
+            display: flex
+        }
+
+        .bookmark{
+            margin-left: 5px
+        }
+
+        .row {
+            /* margin: 0 15px; */
+            margin: 0;
+            display: flex;
+        }
+
+        .nav-list {
+            width: 70%;
+        }
+
+        .mp-nav-container {
+            width: 100%;
+            border-bottom: 2px solid #CB050C;
+        }
+
+        .tab-content-line_content_text {
+            display: none;
+        }
+
+        .modal-content-line_content_title, .tab-content-line_content_ghim span {
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: underline
+        }
+        
+        /* pagination starts here */
+        .tap-view-container {
+            text-align: center;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .table-pagination {
+            justify-content: center;
+            align-items: center;
+            display: none;
+            width: 100%;
+        }
+
+        .page-numbers{
+            display: flex;
+            flex-direction: row;
+            width: 30%;
+            justify-content: center;
+        }
+        .page-number {
+            padding: 8px 12px;
+            margin: 2px;
+            border-radius: 5px;
+            background: #f0f0f0;
+            cursor: pointer;
+        }
+
+        .page-number.active {
+            background: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .hidden-item {
+            display: none
+        }
+
+        @media(max-width: 768px){
+            button{
+                width: 30px;
+            }
+        }
+
+        /* @media (max-width: 991px) {
+            .main-MenuList {
+                justify-content: flex-start;
+            }
+
+        } */
+        /* pagination ends here */
+    </style>
+
+    <!-- 宿題 - do not delete! -->
+    <!-- <div style="max-width: 1280px; margin: 0 auto; padding-top: 5px; padding-bottom: 5px;">
+        <apex:image style="width: 150px; height: 60px; padding: 0 1.6rem 1.5rem 1.6rem; max-width: 100%; display: block" id="theLogoImage"
+            value="{!$Resource.logoyamaha}" alt="Description of image here" />
+    </div>
+    <div style="max-width: 1280px; margin: auto">
+        <apex:image style="padding: 0 1.6rem 1.5rem 1.6rem; max-width: 100%; display: block" id="theImage" value="{!$Resource.yamaha}"
+            alt="Description of image here" />
+    </div> -->
+    <!-- <apex:form>
+        <div style="display: flex; flex-direction: column; gap: 15px; width: 1140px; margin: auto; box-sizing: border-box;">
+            <div style="background: rgb(72, 33, 122); text-align: center; padding: 1rem; border-radius: 5px;">
+                <h2 style="font-weight: bold; color: #fff; margin-bottom: 10px; font-size: 1.5rem; font-weight: bold">
+                    Music Courses for Children</h2>
+            </div>
+
+            <apex:outputText style="font-weight: bold; font-size: 14px" value="Please kindly fill in this form when you are interested in trial lesson or enrollment in Yamaha Music School"
+            />
+            <br/>
+
+            <div style="display: flex; justify-content: flex-end; align-items: center; width: 100%">
+                <apex:outputText style="color: red; margin-right: 5px;" value="*" />
+                <apex:outputText value="Indicates required field." />
+            </div>
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Salutation"
+                for="salutation" />
+            <apex:selectList style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;"
+                id="salutation" value="{!Case.Salutation__c}" multiselect="false" size="1">
+                <apex:selectOptions value="{!salutationOptions}" />
+            </apex:selectList>
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="First Name"
+            />
+            <apex:inputField html-placeholder="Example: John" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                value="{!Case.First_Name__c}"></apex:inputField>
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Last Name"
+                />
+                <apex:outputLabel style="color: red;" value="*" />
+            </div>
+            <apex:inputField html-placeholder="Example: Tan" id="lastname" label="Last Name" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                value="{!Case.Last_Name__c}"></apex:inputField>
+            <apex:message for="lastname" style="color: red;" />
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Email"
+                />
+                <apex:outputLabel style="color: red;" value="*" />
+            </div>
+            <apex:inputField id="email" html-placeholder="Example: john.tan@example.com" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                value="{!Case.Email__c}"></apex:inputField>
+            <apex:outputLabel rendered="{!errorEmail}" style="color: red;" value="{!errorStringEmail}" for="email" />
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Phone"
+            />
+            <apex:inputField id="phone" html-placeholder="Example: 1111-1111" style="height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                value="{!Case.Phone__c}"></apex:inputField>
+            <apex:outputLabel rendered="{!errorPhone}" style="color: red;" value="{!errorStringPhone}" for="phone" />
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Student Name"
+                />
+                <apex:outputLabel style="color: red;" value="*" />
+            </div>
+            <apex:inputField id="stName" html-placeholder="Example: Peter" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                value="{!Case.Student_s_Name__c}"></apex:inputField>
+            <apex:outputLabel rendered="{!errorStudentName}" style="color: red;" value="{!errorStringStudentName}" for="stName" />
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Student Birthday"
+                />
+                <apex:outputLabel style="color: red;" value="*" />
+            </div>
+            <apex:actionRegion>
+                <apex:inputField id="birthday" type="date" showDatePicker="false" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box"
+                    value="{!Case.Student_s_Birthday__c}">
+                    <apex:actionSupport event="onchange" action="{!getTheOptions}" rerender="interestedCourse" />
+                </apex:inputField>
+            </apex:actionRegion>
+            <apex:outputLabel rendered="{!errorBirthday}" style="color: red;" value="{!errorStringBirthday}" for="birthday" />
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Interested Course"
+                    for="interestedCourse" />
+                <apex:outputLabel style="color: red;" value="*" for="interestedCourse" />
+            </div>
+            <apex:selectList style="height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;" id="interestedCourse"
+                value="{!Case.Interested_Course__c}" multiselect="false" size="1">
+                <apex:selectOptions value="{!validCourseOptions}" />
+            </apex:selectList>
+            <apex:outputLabel rendered="{!errorCourse}" style="color: red;" value="{!errorStringCourse}" for="interestedCourse" />
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Interested Day"
+                for="interestedDay" />
+            <apex:inputField style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;"
+                value="{!Case.Interested_Day__c}"></apex:inputField>
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Interested Time Slot"
+                for="interestedSlot" />
+            <apex:inputField style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;"
+                value="{!Case.Interested_Time_Slot__c}"></apex:inputField>
+
+            <div style="display: flex; gap: 10px">
+                <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Location"
+                />
+                <apex:outputLabel style="color: red;" value="*" />
+            </div>
+            <apex:inputField id="location" style="width: 100%; height: 50px; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;"
+                value="{!Case.Location__c}"></apex:inputField>
+            <apex:outputLabel rendered="{!errorLocation}" style="color: red;" value="{!errorStringLocation}" for="location" />
+
+            <apex:outputLabel style="color: rgb(72, 33, 122); font-size: 16px; font-weight: bold; letter-spacing: 2px" value="Remarks"
+            />
+            <apex:inputTextarea html-placeholder="Please fill in any other preferred days, time slot or location" rows="5" style="resize:vertical; height: unset; padding: 6px 12px; font-size: 14px; border: 1px solid #ccc; border-radius: 4px;"
+                value="{!Case.Remarks__c}"></apex:inputTextarea>
+
+            <div style="border: 1px solid rgb(72, 33, 122); margin: 1rem 0; padding: 1.5rem 1.5rem;">
+                <apex:outputText style="font-size: 14px" value="I hereby confirm that this form is only for citizens located in Singapore and does not apply to European citizens or residents."
+                />
+                <br/>
+                <apex:outputText style="font-size: 14px" value="I have read and agree to the " />
+                <a style="font-size: 14px; color: rgb(72, 33, 122)" href="https://sg.yamaha.com/en/terms_of_use/">Terms of Use.</a>
+                <br/>
+                <apex:outputText style="font-size: 14px" value="I have read and agree to Yamaha's " />
+                <a style="font-size: 14px; color: rgb(72, 33, 122)" href="https://sg.yamaha.com/en/privacy_policy/">privacy policy.</a>
+                <br/>
+                <apex:outputText style="font-size: 14px" value="I have read and agree to " />
+                <a style="font-size: 14px; color: rgb(72, 33, 122)" href="https://sg.yamaha.com/en/cookie_policy/">the consent to collection and use of personal information.</a>
+                <br/>
+
+                <div style="display: flex; gap: 10px; align-items: center; margin: 15px">
+                    <apex:inputCheckbox onclick="toggleButton()" id="checkbox"></apex:inputCheckbox>
+                    <apex:outputText style="font-weight: bold; font-size: 16px" value="Yes, I agree" />
+                    <apex:outputText style="color:red; font-size: 16px" value="*" />
+                </div>
+            </div>
+
+            <div style="display: flex; align-items: center; width: 100%; box-sizing: border-box; justify-content: center; margin: 15px">
+                <apex:commandButton id="theButton" value="Submit" action="{!save}" style="background: rgb(72, 33, 122); font-size: 1rem; border: 1px solid rgb(72, 33, 122); padding: 8px 15px; width: 25%; color: #fff"
+                />
+            </div>
+
+            <script>
+                window.onload = function () {
+                    var button = document.getElementById('{!$Component.theButton}');
+                    var checkbox = document.getElementById('{!$Component.checkbox}');
+
+                    if (!checkbox.checked) {
+                        button.disabled = true;
+                        button.style.cursor = "not-allowed";
+                    } else {
+                        button.disabled = false;
+                        button.style.cursor = "pointer";
+                    }
+                };
+
+                function toggleButton() {
+                    var checkbox = document.getElementById('{!$Component.checkbox}');
+                    var button = document.getElementById('{!$Component.theButton}');
+
+                    button.disabled = !checkbox.checked;
+                    button.style.cursor = button.disabled ? "not-allowed" : "pointer";
+                }
+            </script>
+        </div>
+    </apex:form> -->
+    <!-- 宿題 - do not delete! -->
+
+    <section id="content">
+            <div class="mp-Main-MenuUser-inner">
+                <div id="mp-Main-MenuUser-Container" class="mp-Main-MenuUser-Container">
+                    <div class="mp-Main-MenuUser-Title">
+                        メッセージ一覧
+                    </div>
+                    <div class="mp-nav-container">
+                        <!-- Tab Navigation -->
+                        <ul class="nav nav-tabs nav-list">
+                            <li class="active" onclick="setActiveTab('tab1')">
+                                <a href="#tab1" data-toggle="tab">
+                                    重要なお知らせ
+                                    <span id="bubble-count-number" class="bubble-count-number">5</span>
+                                </a>
+                            </li>
+                            <li onclick="setActiveTab('tab2')">
+                                <a href="#tab2" data-toggle="tab">その他のお知らせ</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Tab Content -->
+                    <apex:form >
+                        <div class="tab-content">
+                            <ul id="tab1" class="tab-pane fade in active">
+                                <apex:repeat id="repeater" var="noti" value="{!finalList}">
+                                    <li id="{!noti.noti.Id}" class="tab-content-line hidden-item">
+                                        <!-- Bootstrap here -->
+                                       <div class="container">
+                                            <div class="row">
+                                                <div class="tab-content-line-timeline col-md-2 col-sm-2 col-xs-2">
+                                                    <div class="tab-content-line_dot unread">
+                                                        <img class="dot" src="{!URLFOR($Resource.icon, 'circle_red.png')}" alt=""/>
+                                                    </div>
+                                                    <div class="tab-content-line_date">
+                                                        {!noti.formattedDate}
+                                                    </div>
+                                                </div>
+                                                <div class="tab-content-line_content col-md-10 col-sm-10 col-xs-10">
+                                                    <div class="tab-content-line_content_ghim">
+                                                        <apex:outputPanel rendered="{!noti.noti.Pin__c}">
+                                                            <img class="ghim" src="{!URLFOR($Resource.icon, 'pin_icon.png')}" alt=""/>
+                                                        </apex:outputPanel>
+                                                        <span onclick="getSpanContext('{!noti.noti.Id}')" class="tab-content-line_content_title">{!noti.noti.Title__c}</span>
+                                                        <apex:outputPanel rendered="{!NOT(noti.noti.Pin__c)}">
+                                                            <apex:commandLink action="{!toggleBookmark}" reRender="repeater">    
+                                                                <apex:param name="notiId" value="{!noti.noti.Id}" assignTo="{!selectedNotiId}" />     
+                                                                <img class="bookmark" width="16px" height="18px" src="{!URLFOR($Resource.iconCollection, 'icons/icn-bookmark.svg')}" alt=""/>
+                                                            </apex:commandLink>
+                                                        </apex:outputPanel>
+                                                    </div>
+                                                    <span onclick="getSpanContext('{!noti.noti.Id}')" class="tab-content-line_content_text">
+                                                        {!noti.noti.Body__c}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                       </div>
+                                        <!-- Bootstrap here -->
+
+                                        <!-- <div class="tab-content-line-timeline">
+                                            <div class="tab-content-line_dot unread">
+                                                <img class="dot" src="{!URLFOR($Resource.icon, 'circle_red.png')}" alt=""/>
+                                            </div>
+                                            <div class="tab-content-line_date">
+                                                {!noti.formattedDate}
+                                            </div>
+                                        </div>
+                                        <div class="tab-content-line_content">
+                                            <div class="tab-content-line_content_ghim">
+                                                <apex:outputPanel rendered="{!noti.noti.Pin__c}">
+                                                    <img class="ghim" src="{!URLFOR($Resource.icon, 'pin_icon.png')}" alt=""/>
+                                                </apex:outputPanel>
+                                                <span onclick="getSpanContext('{!noti.noti.Id}')" class="tab-content-line_content_title">{!noti.noti.Title__c}</span>
+                                                <apex:outputPanel rendered="{!NOT(noti.noti.Pin__c)}">
+                                                    <apex:commandLink action="{!toggleBookmark}" reRender="repeater">    
+                                                        <apex:param name="notiId" value="{!noti.noti.Id}" assignTo="{!selectedNotiId}" />     
+                                                        <img class="bookmark" width="16px" height="18px" src="{!URLFOR($Resource.iconCollection, 'icons/icn-bookmark.svg')}" alt=""/>
+                                                    </apex:commandLink>
+                                                </apex:outputPanel>
+                                            </div>
+                                            <span onclick="getSpanContext('{!noti.noti.Id}')" class="tab-content-line_content_text">
+                                                {!noti.noti.Body__c}
+                                            </span>
+                                        </div> -->
+                                    </li>
+                                </apex:repeat> 
+                            </ul>
+                            <ul id="tab2" class="tab-pane fade">
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.icon, 'circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small>
+                                            <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <div class="tab-content-line_content_ghim">
+                                            <img class="ghim" src="{!URLFOR($Resource.icon, 'pin_icon.png')}" alt=""/>
+                                        </div>
+                                        <span>お友達紹介で最大16,000円プレゼント！</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small>
+                                            <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.icon, 'circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small>
+                                            <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>LINE連携のお願い</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </apex:form>
+                    <div class="tap-view-container">
+                        <p id="text-option" class="text-option" onclick="expandFunction()">重要なお知らせをすべて見る (全30件)</p>
+                        <div id="table-pagination" class="table-pagination">
+                            <button id="prev" onclick="changePage(-1)">&#x276E;</button>
+                            <div id="page-numbers" class="page-numbers"></div>
+                            <button id="next" onclick="changePage(1)">&#x276F;</button>
+                        </div>
+                    </div>
+                    <div id="modalText" class="modal fade" data-backdrop="static" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal Content -->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" onclick="callToApex(currentNotification)">&times;</button>
+                                    <h4 id="modalTitle" class="modal-title modal-content-line_content_title">詳細情報</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="modalContext">ここにテキストが入ります。</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" data-dismiss="modal" onclick="callToApex(currentNotification)">閉じる</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </section>
+</apex:page>

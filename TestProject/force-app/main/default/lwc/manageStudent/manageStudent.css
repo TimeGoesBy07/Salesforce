@@ -1,0 +1,69 @@
+.the-table {
+    border-radius: 3px;
+    border: 1px solid;
+}
+
+.table-header {
+    background-color: #95A5A6;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: 1px solid;
+}
+
+.column-cb,
+.column-action {
+    width: 3px;
+    border: 1px solid;
+    padding: 5px;
+    text-align: center;
+}
+
+.column-gpa,
+.column-status,
+.column-credit {
+    width: 100px;
+    border: 1px solid;
+    text-align: center;
+}
+
+.column-name,
+.column-dob,
+.column-class {
+    width: 150px;
+    border: 1px solid;
+    text-align: center;
+}
+
+.num-button {
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 5px;
+    font-size: 13px;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.num-button:hover {
+    background-color: #f0f0f0;
+    color: #000;
+}
+
+.num-button:active {
+    background-color: #007bff;
+    color: white;
+}
+
+.num-button.dots {
+    cursor: not-allowed;
+    border: none;
+}
+
+.active-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.page-bar {
+    width: 500px;
+}

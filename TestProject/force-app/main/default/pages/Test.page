@@ -1,0 +1,71 @@
+<apex:page standardController="Case" recordSetVar="cases">
+    
+<apex:form >
+    <apex:tabPanel >
+        <apex:tab label="Home">
+            <apex:pageBlock title="Account List">
+                <apex:pageBlockTable value="{!cases}" var="item">
+            	<apex:column value="{!item.SuppliedName}" />
+                <apex:column value="{!item.SuppliedPhone}" />
+                    
+                <apex:selectList ></apex:selectList>
+            </apex:pageBlockTable>
+            </apex:pageBlock>
+        </apex:tab>
+        
+        <apex:tab label="Products">
+            <apex:toolbar >
+                <apex:toolbarGroup itemSeparator="line">
+                	<apex:outputLink >Salesforce</apex:outputLink>
+                    <apex:outputLink >Links</apex:outputLink>
+                </apex:toolbarGroup>
+            </apex:toolbar>
+        </apex:tab>
+        
+        <apex:tab label="Edit account">
+            <apex:pageMessage summary="Notification here" rendered="false" severity="confirm" strength="3"></apex:pageMessage>
+            
+        	<apex:panelBar >
+        		<!-- <apex:panelBarItem label="Personal Information" onenter="alert('Entering item 1')" onleave="alert('Leaving item 1')">
+            		<apex:pageBlock mode="edit">
+        				<apex:pageBlockSection title="Content section" columns="2">
+            				<apex:pageBlockSectionItem >Enter name: <apex:inputField id="name" value="{!cases.Name}" /></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem >Enter phone: <apex:inputField id="phone" value="{!cases.Phone}" /></apex:pageBlockSectionItem>
+                            
+                            <apex:pageBlockSectionItem >Choose type: <apex:inputField id="type" value="{!cases.Type}" /></apex:pageBlockSectionItem>
+        				</apex:pageBlockSection>
+    				</apex:pageBlock>
+        		</apex:panelBarItem> -->
+        
+        		<apex:panelBarItem label="Additional Information">
+            		<apex:pageBlock >
+        				<apex:pageBlockSection title="Website">
+            				<apex:pageBlockSectionItem >Enter website: <apex:inputText id="website" /></apex:pageBlockSectionItem>
+        				</apex:pageBlockSection>
+        
+        				<apex:pageBlockSection title="Employees">
+            				<apex:pageBlockSectionItem >Enter employees: <apex:inputText id="employees" /></apex:pageBlockSectionItem>
+        				</apex:pageBlockSection>
+                        
+                        <apex:pageBlockSection title="Phone">
+            				<apex:pageBlockSectionItem >Enter phone: <apex:inputText id="phone" /></apex:pageBlockSectionItem>
+        				</apex:pageBlockSection>
+    				</apex:pageBlock>
+        		</apex:panelBarItem>
+    		</apex:panelBar>
+    
+    		<apex:panelGrid columns="3" border="2">
+        		<apex:outputText value="First"></apex:outputText>
+        		<apex:outputText value="Second"></apex:outputText>
+        		<apex:outputText value="Third"></apex:outputText>
+        		<apex:outputText value="First"></apex:outputText>
+    		</apex:panelGrid>
+    
+    		<apex:commandButton value="Save" action="{!save}"/>
+            <apex:commandButton value="Delete" action="{!delete}"/>
+    		<apex:commandButton value="Back" />
+        </apex:tab>
+    </apex:tabPanel>
+</apex:form>
+</apex:page>

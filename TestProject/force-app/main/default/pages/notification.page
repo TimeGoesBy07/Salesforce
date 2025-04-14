@@ -1,0 +1,454 @@
+<apex:page docType="html-5.0" showHeader="false" applyHtmlTag="false" standardStylesheets="false" 
+    controller="MPS_MainRenewalCtrl" action="{!updateContact}" cache="false">
+     <!-- 20250212 Mypage改修 start -->
+    <!-- <apex:composition template="MPS_TopTemplateRenewal"> -->
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/destyle.min.css')}"/>
+    <apex:stylesheet value="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/common.css')}"/>
+    
+    <apex:define name="head">
+        <title>ホーム | {!$Label.COMMUNITY_SITE_NAME}</title>
+        <script type="text/javascript">
+            window.tokenId = '{!staffId}';
+            window.firstTime = parseInt('{!IF(isFirstLogin, 1, 0)}', 10);
+        </script>
+        <style type="text/css">
+            body{
+                background-color: #FAF4F0;
+                font-family: "Noto Sans JP", !important;
+            }
+
+          
+            @media (max-width: 991px) {
+                .main-MenuList {
+                    justify-content: flex-start;
+                }
+              
+            }
+         
+        </style>
+         <style type="text/css">
+            .mp-Main-Menu{
+                padding-bottom: 5rem;
+                background-color: #FAF4F0;
+            }
+            .mp-Main-MenuInner{
+                display: grid;
+                grid-template-columns: 70% 30%;
+            }
+            .mp-Main-MenuUser-Title{
+                font-size: 1.6rem;
+                color: #000000;
+                padding-bottom: 0.5rem;
+                border-bottom: 2px solid #CB050C;
+                margin-bottom: 2rem;
+            }
+            .mp-Main-MenuUser-Container{
+                background-color: #fff;
+                padding: 0 20px !important;
+            }
+       
+            .tab-content-line-timeline{
+                display: flex;
+                align-items: center;
+            }
+            .tab-content-line_date{
+                margin-right: 20px;
+            }
+            .tab-content-line_dot.unread{
+                min-width: 20px;
+            }
+       
+            .tab-pane{
+                padding-left: 0;
+            }
+         
+            .bubble-count-number{
+                color: white;
+                font-size: 1.5em;
+                line-height: 1.5em;
+                min-width: 1.5em;
+                font-weight: 700;
+                padding: 0em 0.5em;
+                background: #E38038;
+                border-radius: 1.5em;
+                position: absolute;
+                top: -1rem;
+                right: 25%;
+                border: 1px solid;
+            }
+            .nav-tabs {
+                display: flex;
+                width: 100%;
+                /* border-bottom: 2px solid #CB050C; */
+            }
+            .nav-tabs > li {
+                flex: 1; /* Makes each tab flexible and take equal width */
+                text-align: center;
+                margin-right: 1rem;
+            }
+            .nav-tabs > li:last-child{
+                margin-right: 0; 
+            }
+            .nav-tabs > li > a {
+                width: 100%;
+                border-radius: 0;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                border: 1px solid #CFCACA;
+                border-bottom:none;
+                color: black;
+                position: relative;
+                font-weight: 700;
+                padding: 0.8rem;
+            }
+            .nav-tabs>li.active>a{
+                color: white;
+                background-color: #CB050C;
+                border: none;
+            }
+            .nav-tabs>li>a:hover{
+                color: white;
+                background-color: #890308 !important;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                border: 1px solid #890308;
+                border-bottom: none;
+            }
+            .nav-tabs>li.active>a:hover{
+                color: white;
+                background-color: #890308 !important;
+                border: none;
+            }
+            .nav-tabs>li.active>a:focus{
+                color: white;
+                background-color: #CB050C;
+                border: none;
+            }
+            .tab-content {
+                /* padding: 15px; */
+                /* border: 1px solid #CFCACA; */
+                border-top: none;
+            }
+            .tab-content-line{
+                /* display: grid;
+                grid-template-columns: 2% 8% 90%; */
+                display: flex;
+                padding: 1.5rem;
+                border: 1px solid #CFCACA;
+                align-items: center;
+                border-top: none;
+                cursor: pointer;
+            }
+            .tab-content-line:hover{
+                background-color: #F8F8F8;
+            }
+            .tab-content-line:hover .tab-content-line_content span{
+                color: #CB050C;
+                text-decoration: underline;
+            }
+            .tab-content-line:last-child{
+                border-bottom-left-radius: 10px;
+                border-bottom-right-radius: 10px;
+            }
+            .tab-content-line_content{
+                display: flex;
+            }
+            .tab-content-line_content img{
+                margin-right: 1rem;
+            }
+            .tab-content-line_content span{
+                
+            }
+
+            .container{
+                /* padding: 0;  */
+            }
+            .row{
+                /* margin: 0 15px; */
+                margin: 0;
+            }
+
+            .nav-list{
+                width: 70%;
+            }
+
+            .mp-nav-container{
+                width: 100%;
+                border-bottom: 2px solid #CB050C;
+            }
+            @media (min-width: 1280px) {
+                .container{
+                    width: 1280px; 
+                }
+            }
+            @media (max-width: 991px) {
+                .hidden-mobile{
+                    display: none;
+                }
+                .mp-Main-MenuUser-Container{
+                    padding: 10px !important;
+                }
+
+                .tab-content-line_dot.unread{
+                    width: 20px;
+                }
+                .tab-content-line_dot img{
+                    /* padding-right: 20px; */
+                    padding-right: 0px;
+                    margin: 0 auto;
+                }
+                .tab-content-line_date{
+                    padding-left: 10px;
+                }
+                .tab-content-line_content{
+                    align-items: center;
+                }
+                .tab-content-line_content span{
+                    padding-left: 10px;
+                }
+                .tab-content-line_content_ghim{
+                    width: 20px; 
+                }
+                .tab-content-line_content_ghim img{
+                    margin: 0 auto;
+                }
+                .tab-content-line_content_ghim span{
+                    padding-left: 10px;
+                }
+               
+                .mp-Main-MenuInner{
+                    display: grid;
+                    grid-template-columns: auto;
+                    width: 90%;
+                    margin: 0 auto;
+                }
+           
+                .nav-tabs > li > a{
+                    font-size: 10px;
+                }
+                .tab-content-line{
+                    display: block;
+                }
+
+               
+            }
+        </style>
+    </apex:define>
+
+    <apex:define name="body">
+        <script type="text/javascript">
+            const COOKIE_SCJSPOPUP_ID = 'suggestChangeJobStatusPopupHide';
+            const COOKIE_SCJSPOPU_MAXAGE = 60*60*24;
+            $(function(){
+                // $("#interviewPopup").modal('show');
+                // $("#notCompletePopup").modal('show');
+              var isPopup = false;
+              if ({!showInterviewPopup} && {!!isRegisitionRejected}) {
+                $("#interviewPopup").modal('show');
+                isPopup = true;
+              }
+              if ({!showProfilePopup} && {!!isRegisitionRejected}) {
+                  $("#notCompletePopup").modal('show');
+                  isPopup = true;
+              }
+              if ({!showSecProfilePopup} && {!!isRegisitionRejected}) {
+                $("#notFinishPopup").modal('show');
+                  isPopup = true;
+              }
+              if ({!showLimitStaffPopup} && {!!isRegisitionRejected}) {
+                  $('#limitStaffPopup').modal('show');
+                  isPopup = true;
+              }
+              if ({!!isWorking} && {!isNotFindingJob} && {!isRegisitered}
+                    && !document.cookie.split(';').some((item) => item.trim().startsWith(COOKIE_SCJSPOPUP_ID + '='))) {
+                  $("#suggestChangeJobStatusPopup").modal('show');
+                  document.cookie = COOKIE_SCJSPOPUP_ID+'=true;path=/;max-age='+COOKIE_SCJSPOPU_MAXAGE+';secure;';
+                  isPopup = true;
+              }
+              var isTop = location.href.search(new RegExp("mps_main", "i"));
+    
+              //未登録者かつMYPAGEトップかつポップアップなし時の処理
+              if({!isInterimRegisitered} && isTop > -1 && !isPopup) {
+                  //特に処理なし
+              } else {
+                  $("#jobEntryAlert").hide();
+              }
+            });
+    
+            // モバイル/PCの差もなくなるので
+            // var SSOUrl = isMobile() ? '{!$Label.MPS_BENEFIT_ONE_SSO_URL_MOBILE}' : '{!$Label.MPS_BENEFIT_ONE_SSO_URL_PC}';
+            //var pointSSOURL = isMobile() ? '{!$Label.MPS_BENEFITPOINT_URL_MOBILE}' : '{!$Label.MPS_BENEFITPOINT_URL_PC}';
+            var transUrl = isMobile() ? '/smp/pages/bs/mypage/myPageTop.faces' : '/bs/pages/bs/myPage/myPageTop.faces';
+    
+            jQuery((function(s){s(".main-NewsList_ItemHead").length>=1&&s(".main-NewsList_ItemHead.js-SwitchBtn").on("click",(function(a){s(this).hasClass("js-Open")?(s(this).removeClass("js-Open"),s(this).next(s(".js-SwitchArea")).fadeOut(50)):(s(this).addClass("js-Open"),s(this).next(s(".js-SwitchArea")).fadeIn(50)),a.preventDefault()})),s(".main-Modal_Cover").on("click",(function(){s(".main-Modal").addClass("js-Hide")})),s("main-Modal_Close").on("click",(function(){s(".main-Modal").addClass("js-Hide")}))}));
+          </script>
+        <section id="content">
+            <!-- <apex:variable var="isNotRejected" value="{!!isRegisitionRejected}" rendered="{!!isRegisitionRejected}">
+                <c:MPS_NoticeBanner message="{!safetyConfirmBannerMessage}" url="{!safetyConfirmURL}" hide="{!!safetyConfirmBannerView}"/>
+            </apex:variable> -->
+            <div class="container">
+                <div class="mp-Main-MenuUser-inner">
+                    <div class="mp-Main-MenuUser-Container col-lg-12">
+                        <div class="mp-Main-MenuUser-Title">
+                            メッセージ一覧
+                        </div>
+                        <div class="mp-nav-container">
+                            <!-- Tab Navigation -->
+                            <ul class="nav nav-tabs nav-list">
+                                <li class="active">
+                                    <a href="#tab1" data-toggle="tab">
+                                        重要なお知らせ
+                                        <span class="bubble-count-number">5</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#tab2" data-toggle="tab">その他のお知らせ</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <ul id="tab1" class="tab-pane fade in active">
+                                <li class="tab-content-line">
+                                   <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                   </div>
+                                    <div class="tab-content-line_content">
+                                        <div class="tab-content-line_content_ghim">
+                                            <img class="ghim" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/pin_icon.png')}" alt=""/>
+                                        </div>
+                                        <span>お友達紹介で最大16,000円プレゼント！</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>LINE連携のお願い</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                            </ul>
+                            <ul id="tab2" class="tab-pane fade">
+                                <li class="tab-content-line">
+                                   <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                   </div>
+                                    <div class="tab-content-line_content">
+                                        <div class="tab-content-line_content_ghim">
+                                            <img class="ghim" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/pin_icon.png')}" alt=""/>
+                                        </div>
+                                        <span>お友達紹介で最大16,000円プレゼント！</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot">
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>パスワードの有効期限は12/25です</span>
+                                    </div>
+                                </li>
+                                <li class="tab-content-line">
+                                    <div class="tab-content-line-timeline">
+                                        <div class="tab-content-line_dot unread">
+                                            <img class="dot" src="{!URLFOR($Resource.commonCssRenewal, 'commonCssRenewal/circle_red.png')}" alt=""/>
+                                        </div>
+                                        <div class="tab-content-line_date">
+                                            <small>2025.</small> <span>4/2</span>
+                                        </div>
+                                    </div>
+                                    <div class="tab-content-line_content">
+                                        <span>LINE連携のお願い</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                  
+                </div>
+            </div>
+        </section>
+    </apex:define>
+</apex:composition>
+</apex:page>
